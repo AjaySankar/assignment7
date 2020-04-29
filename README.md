@@ -1,5 +1,5 @@
-# assignment6
-CS-648 Assignment 6
+# assignment7
+CS-648 Assignment 7
 
 Run the following commands to start the server.
 * cd api/
