@@ -37,8 +37,8 @@ const resolvers = {
         throw new Error('Empty database connection!!');
       }
       const collection = db.collection('products');
-      return collection.countDocuments({}).then(count => count)
-    }
+      return collection.countDocuments({}).then((count) => count);
+    },
   },
   Mutation: {
     addProduct: (root, args) => {

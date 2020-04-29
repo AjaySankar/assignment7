@@ -54,7 +54,7 @@ class ProductList extends Component {
           const { getProducts = [] } = data
           return (
             <div>
-              <ProductCounter/>
+              <ProductCounter />
               <ProductTable products={getProducts} onSave={this.handleSave} />
               <h3> Add a new product to inventory </h3>
               <hr />

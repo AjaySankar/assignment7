@@ -17,13 +17,13 @@ export default class NumInput extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {value: prevValue} = prevProps
-    const {value: newValue} = this.props
-    if(prevValue !== newValue) {
+    const { value: prevValue } = prevProps
+    const { value: newValue } = this.props
+    if (prevValue !== newValue) {
       this.setState({ value: `$${newValue}` })
     }
   }
-  
+
   onChange({ target: { value = " " } }) {
     // Remove the currency symbol '$'
     const strippedValue = value.substring(1)

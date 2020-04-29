@@ -10,9 +10,9 @@ export default class TextInput extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {value: prevValue} = prevProps
-    const {value: newValue} = this.props
-    if(prevValue !== newValue) {
+    const { value: prevValue } = prevProps
+    const { value: newValue } = this.props
+    if (prevValue !== newValue) {
       this.setState({ value: newValue })
     }
   }

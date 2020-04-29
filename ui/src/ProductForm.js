@@ -142,12 +142,17 @@ class ProductForm extends Component {
                     </Button>
                   </Form.Group>
                   <Form.Group as={Col}>
-                    <Button variant="primary" type="reset" onClick={() => this.setState({ product: { ...RESET_VALUES }})}>
+                    <Button
+                      variant="primary"
+                      type="reset"
+                      onClick={() =>
+                        this.setState({ product: { ...RESET_VALUES } })
+                      }
+                    >
                       Reset
                     </Button>
                   </Form.Group>
                 </Form.Row>
-                
               </Form>
               <Modal show={showModal} onHide={this.closeModal}>
                 <Modal.Header closeButton>

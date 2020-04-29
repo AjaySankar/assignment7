@@ -52,7 +52,7 @@ class UpdateForm extends Component {
   }
 
   componentDidMount() {
-    this.getProductInfo();
+    this.getProductInfo()
   }
 
   getProductInfo() {
@@ -74,12 +74,14 @@ class UpdateForm extends Component {
             image
           }
         }
-      `
+      `,
     })
-    .then(({ data = {}}) => this.setState({
-      product: data.getProductInfo
-    }))
-    .catch(error => window.console.log(error))
+      .then(({ data = {} }) =>
+        this.setState({
+          product: data.getProductInfo,
+        })
+      )
+      .catch((error) => window.console.log(error))
   }
 
   handleChange({ target }, naturalValue) {
@@ -176,7 +178,11 @@ class UpdateForm extends Component {
             </Button>
           </Form.Group>
           <Form.Group as={Col}>
-            <Button variant="primary" type="submit" onClick={this.getProductInfo}>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={this.getProductInfo}
+            >
               Reset Product
             </Button>
           </Form.Group>
