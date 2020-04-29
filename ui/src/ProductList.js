@@ -4,6 +4,7 @@ import { Query } from "@apollo/react-components"
 import { Table } from "react-bootstrap"
 import ProductForm from "./ProductForm"
 import ProductRow from "./ProductRow"
+import ProductCounter from "./ProductCount"
 
 const getProductsQuery = gql`
   {
@@ -53,6 +54,7 @@ class ProductList extends Component {
           const { getProducts = [] } = data
           return (
             <div>
+              <ProductCounter/>
               <ProductTable products={getProducts} onSave={this.handleSave} />
               <h3> Add a new product to inventory </h3>
               <hr />

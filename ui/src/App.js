@@ -15,7 +15,6 @@ function App() {
     <ApolloProvider client={ProductsClient}>
       <div>
         <h1> My Company Inventory </h1>
-        <h3> Showing all available products </h3>
         <hr />
         <Switch>
           <Route exact path="/" component={ProductList} />
