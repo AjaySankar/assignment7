@@ -32,6 +32,13 @@ const resolvers = {
       const collection = db.collection('products');
       return collection.findOne({ id: productId }).then((product) => product);
     },
+    getProductCount: () => {
+      if (!db) {
+        throw new Error('Empty database connection!!');
+      }
+      const collection = db.collection('products');
+      return collection.countDocuments({}).then(count => count)
+    }
   },
   Mutation: {
     addProduct: (root, args) => {

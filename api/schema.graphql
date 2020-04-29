@@ -32,7 +32,8 @@ input updateProduct {
 
 type Query {
   getProducts: [Product],
-  getProductInfo(id: Int): Product
+  getProductInfo(id: Int): Product,
+  getProductCount: Int
 }
 
 type Mutation {
