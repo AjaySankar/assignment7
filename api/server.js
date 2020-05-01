@@ -71,6 +71,7 @@ const resolvers = {
         .catch((error) => console.log(`Product ${id} - update failed: ${error}`));
     },
     removeProduct: (root, { id: productId = 0 }) => {
+      // Moves product to recycle bin
       if (!db) {
         throw new Error('Empty database connection!!');
       }
@@ -89,6 +90,33 @@ const resolvers = {
         })
         .catch((error) => console.log(`Product ${productId} - delete failed: ${error}`));
     },
+    undoDelete: (root, { id: productId = 0 }) => {
+      // Reverse operation of "removeProduct" resolver, moves product from recycle bin to product list
+      if (!db) {
+        throw new Error('Empty database connection!!');
+      }
+      const collection = db.collection('recycle_products');
+      if (!productId) {
+        throw new Error(`Invalid product id - ${productId} requested to be deleted !!`);
+      }
+      collection.findOne({ id: productId })
+        .then((product) => {
+          const recycledProduct = {};
+          // eslint-disable-next-line no-return-assign
+          Object.keys(defaultProductInfo).forEach((key) => recycledProduct[key] = product[key]);
+          db.collection('products')
+            .insertOne(recycledProduct)
+            .then(() => true);
+        })
+        .catch((error) => console.log(`Product ${productId} - undo-delete failed: ${error}`));
+    },
+    deleteForever: (root, { id: productId = 0 }) => {
+      // Deletes object forever from recycle bin
+      if (!db) {
+        throw new Error('Empty database connection!!');
+      }
+      db.collection('recycle_products').deleteOne({ id: { $eq: productId } }).then(() => true)
+    }
   },
 };
 
