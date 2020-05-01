@@ -20,7 +20,7 @@ class ProductRow extends Component {
   }
 
   handleDelete() {
-    const { deleteProduct, onSave } = this.props
+    const { deleteProduct, onDelete } = this.props
     const {
       product: { id },
     } = this.state
@@ -30,7 +30,7 @@ class ProductRow extends Component {
       },
     })
       .then(() => {
-        onSave()
+        onDelete(id)
       })
       .catch((error) => {
         window.console.error(

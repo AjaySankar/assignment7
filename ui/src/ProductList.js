@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { gql } from "apollo-boost"
 import { Query } from "@apollo/react-components"
-import { Table } from "react-bootstrap"
+import { Table, Spinner, Toast, Button } from "react-bootstrap"
 import ProductForm from "./ProductForm"
 import ProductRow from "./ProductRow"
 import ProductCounter from "./ProductCount"
@@ -23,24 +23,49 @@ class ProductList extends Component {
     super(props)
     this.state = {
       formData: null,
+      showUndoToast: false,
     }
-    this.handleSave = this.handleSave.bind(this)
+    // Stores the deleted product id. Product id 0 indicates that there is no delete opearation yet (or) 
+    // the previous delete operation has been committed (cannot be restored).
+    this.deletedProductId = 0
+    this.showUndoDeleteToast = (deletedProductId) => {
+      this.deletedProductId = deletedProductId
+      this.setState(({ showUndoToast }) => {
+        return { showUndoToast: !showUndoToast }
+      })
+    }
+    this.undoDelete = this.undoDelete.bind(this)
+    this.deleteForever = this.deleteForever.bind(this)
   }
 
-  handleSave() {
-    this.setState((prevState) => ({ ...prevState }))
+  // Undo the last delete operation.
+  undoDelete() {
+    if(this.deletedProductId > 0) {
+      window.console.log("undoDelete product id " + this.deletedProductId)
+      this.deletedProductId = 0
+    }
+  }
+
+  // Commit the last delete operation.
+  // This operation is irreversible and triggered when user clicks on 'X' of the toast or after the toast automaically
+  // hides after some seconds.
+  deleteForever() {
+    if(this.deletedProductId > 0) {
+      window.console.log("deleteForever product id " + this.deletedProductId)
+      this.deletedProductId = 0
+    }
   }
 
   render() {
     return (
       <Query query={getProductsQuery} pollInterval={250}>
         {({ loading, error, data }) => {
-          const { formData } = this.state
+          const { formData, showUndoToast } = this.state
           if (loading) {
             return (
-              <div>
-                <p> Loading Products... </p>
-              </div>
+              <Spinner animation="border" role="status">
+                <span className="sr-only">Loading Products ...</span>
+              </Spinner>
             )
           }
           if (error) {
@@ -54,8 +79,31 @@ class ProductList extends Component {
           const { getProducts = [] } = data
           return (
             <div>
+              <Toast
+                show={showUndoToast}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                }}
+                onClose={() => {
+                  this.setState(({ showUndoToast }) => {
+                    return { showUndoToast: !showUndoToast }
+                  })
+                  this.deleteForever()
+                }}
+                delay={3000}
+              >
+                <Toast.Header>
+                  <strong className="mr-auto"><h5>Alert</h5></strong>
+                </Toast.Header>
+                <Toast.Body>
+                   <span> Deleted product !! </span>
+                  <Button variant="warning" size="sm" onClick={this.undoDelete}>UNDO</Button>{' '}
+                </Toast.Body>
+              </Toast>
               <ProductCounter />
-              <ProductTable products={getProducts} onSave={this.handleSave} />
+              <ProductTable products={getProducts} onDelete={this.showUndoDeleteToast}/>
               <h3> Add a new product to inventory </h3>
               <hr />
               <ProductForm
@@ -72,14 +120,14 @@ class ProductList extends Component {
 }
 
 function ProductTable(props) {
-  const { products = [], onSave } = props
+  const { products = [], onDelete} = props
   const rows = products.map((productInfo) => {
     return (
-      <ProductRow key={productInfo.id} product={productInfo} onSave={onSave} />
+      <ProductRow key={productInfo.id} product={productInfo} onDelete={onDelete}/>
     )
   })
   return (
-    <Table striped bordered hover>
+    <Table responsive striped bordered hover>
       <thead>
         <tr>
           <th> Product Name </th>
