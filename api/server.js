@@ -70,18 +70,24 @@ const resolvers = {
           .then((product) => product))
         .catch((error) => console.log(`Product ${id} - update failed: ${error}`));
     },
-    removeProduct: (root, args) => {
+    removeProduct: (root, { id: productId = 0 }) => {
       if (!db) {
         throw new Error('Empty database connection!!');
       }
       const collection = db.collection('products');
-      const { id = 0 } = args;
-      if (!id) {
-        throw new Error(`Invalid product id - ${args.id} requested to be deleted !!`);
+      if (!productId) {
+        throw new Error(`Invalid product id - ${productId} requested to be deleted !!`);
       }
-      return collection.deleteOne({ id: { $eq: id } })
-        .then(() => true)
-        .catch((error) => console.log(`Product ${id} - delete failed: ${error}`));
+      collection.findOne({ id: productId })
+        .then((product) => {
+          const recycledProduct = {};
+          // eslint-disable-next-line no-return-assign
+          Object.keys(defaultProductInfo).forEach((key) => recycledProduct[key] = product[key]);
+          db.collection('recycle_products')
+            .insertOne(recycledProduct)
+            .then(() => collection.deleteOne({ id: { $eq: productId } }).then(() => true));
+        })
+        .catch((error) => console.log(`Product ${productId} - delete failed: ${error}`));
     },
   },
 };
