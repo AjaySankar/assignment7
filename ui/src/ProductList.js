@@ -5,6 +5,7 @@ import { Table, Spinner, Toast, Button } from "react-bootstrap"
 import ProductForm from "./ProductForm"
 import ProductRow from "./ProductRow"
 import ProductCounter from "./ProductCount"
+import ProductsClient from "./ProductClient"
 
 const getProductsQuery = gql`
   {
@@ -41,8 +42,20 @@ class ProductList extends Component {
   // Undo the last delete operation.
   undoDelete() {
     if (this.deletedProductId > 0) {
-      window.console.log(`undoDelete product id ${this.deletedProductId}`)
-      this.deletedProductId = 0
+      ProductsClient.mutate({
+        mutation: gql`
+          mutation {
+            undoDelete(id: ${parseInt(this.deletedProductId, 10)})
+          }
+        `
+      })
+      .then(() => window.console.log(`Restored the item ${this.deletedProductId}`))
+      .finally(() => {
+        this.deletedProductId = 0
+        this.setState(({ showUndoToast }) => {
+          return { showUndoToast: !showUndoToast }
+        })
+      })
     }
   }
 
@@ -51,8 +64,20 @@ class ProductList extends Component {
   // hides after some seconds.
   deleteForever() {
     if (this.deletedProductId > 0) {
-      window.console.log(`deleteForever product id ${this.deletedProductId}`)
-      this.deletedProductId = 0
+      ProductsClient.mutate({
+        mutation: gql`
+          mutation {
+            deleteForever(id: ${parseInt(this.deletedProductId, 10)})
+          }
+        `
+      })
+      .then(() => window.console.log(`Deleted forever the item ${this.deletedProductId}`))
+      .finally(() => {
+        this.deletedProductId = 0
+        this.setState(({ showUndoToast }) => {
+          return { showUndoToast: !showUndoToast }
+        })
+      })
     }
   }
 
@@ -89,13 +114,9 @@ class ProductList extends Component {
                   top: 0,
                   right: 0,
                 }}
-                onClose={() => {
-                  this.setState(({ showUndoToast }) => {
-                    return { showUndoToast: !showUndoToast }
-                  })
-                  this.deleteForever()
-                }}
+                onClose={this.deleteForever}
                 delay={3000}
+                autohide
               >
                 <Toast.Header>
                   <strong className="mr-auto">

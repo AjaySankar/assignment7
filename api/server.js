@@ -107,7 +107,7 @@ const resolvers = {
           Object.keys(defaultProductInfo).forEach((key) => recycledProduct[key] = product[key]);
           db.collection('products')
             .insertOne(recycledProduct)
-            .then(() => true);
+            .then(collection.deleteOne({ id: { $eq: productId } }).then(() => true));
         })
         .catch((error) => console.log(`Product ${productId} - undo-delete failed: ${error}`));
     },
