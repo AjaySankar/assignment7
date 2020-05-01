@@ -91,7 +91,8 @@ const resolvers = {
         .catch((error) => console.log(`Product ${productId} - delete failed: ${error}`));
     },
     undoDelete: (root, { id: productId = 0 }) => {
-      // Reverse operation of "removeProduct" resolver, moves product from recycle bin to product list
+      // Reverse operation of "removeProduct" resolver
+      // Moves product from recycle bin to product list
       if (!db) {
         throw new Error('Empty database connection!!');
       }
@@ -115,8 +116,8 @@ const resolvers = {
       if (!db) {
         throw new Error('Empty database connection!!');
       }
-      db.collection('recycle_products').deleteOne({ id: { $eq: productId } }).then(() => true)
-    }
+      db.collection('recycle_products').deleteOne({ id: { $eq: productId } }).then(() => true);
+    },
   },
 };
 

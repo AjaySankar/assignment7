@@ -25,7 +25,7 @@ class ProductList extends Component {
       formData: null,
       showUndoToast: false,
     }
-    // Stores the deleted product id. Product id 0 indicates that there is no delete opearation yet (or) 
+    // Stores the deleted product id. Product id 0 indicates that there is no delete opearation yet (or)
     // the previous delete operation has been committed (cannot be restored).
     this.deletedProductId = 0
     this.showUndoDeleteToast = (deletedProductId) => {
@@ -40,8 +40,8 @@ class ProductList extends Component {
 
   // Undo the last delete operation.
   undoDelete() {
-    if(this.deletedProductId > 0) {
-      window.console.log("undoDelete product id " + this.deletedProductId)
+    if (this.deletedProductId > 0) {
+      window.console.log(`undoDelete product id ${this.deletedProductId}`)
       this.deletedProductId = 0
     }
   }
@@ -50,8 +50,8 @@ class ProductList extends Component {
   // This operation is irreversible and triggered when user clicks on 'X' of the toast or after the toast automaically
   // hides after some seconds.
   deleteForever() {
-    if(this.deletedProductId > 0) {
-      window.console.log("deleteForever product id " + this.deletedProductId)
+    if (this.deletedProductId > 0) {
+      window.console.log(`deleteForever product id ${this.deletedProductId}`)
       this.deletedProductId = 0
     }
   }
@@ -60,7 +60,10 @@ class ProductList extends Component {
     return (
       <Query query={getProductsQuery} pollInterval={250}>
         {({ loading, error, data }) => {
-          const { formData, showUndoToast } = this.state
+          const {
+            formData,
+            showUndoToast: shouldShowUndoToast = false,
+          } = this.state
           if (loading) {
             return (
               <Spinner animation="border" role="status">
@@ -80,9 +83,9 @@ class ProductList extends Component {
           return (
             <div>
               <Toast
-                show={showUndoToast}
+                show={shouldShowUndoToast}
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: 0,
                   right: 0,
                 }}
@@ -95,15 +98,22 @@ class ProductList extends Component {
                 delay={3000}
               >
                 <Toast.Header>
-                  <strong className="mr-auto"><h5>Alert</h5></strong>
+                  <strong className="mr-auto">
+                    <h5>Alert</h5>
+                  </strong>
                 </Toast.Header>
                 <Toast.Body>
-                   <span> Deleted product !! </span>
-                  <Button variant="warning" size="sm" onClick={this.undoDelete}>UNDO</Button>{' '}
+                  <span> Deleted product !! </span>
+                  <Button variant="warning" size="sm" onClick={this.undoDelete}>
+                    UNDO
+                  </Button>{" "}
                 </Toast.Body>
               </Toast>
               <ProductCounter />
-              <ProductTable products={getProducts} onDelete={this.showUndoDeleteToast}/>
+              <ProductTable
+                products={getProducts}
+                onDelete={this.showUndoDeleteToast}
+              />
               <h3> Add a new product to inventory </h3>
               <hr />
               <ProductForm
@@ -120,10 +130,14 @@ class ProductList extends Component {
 }
 
 function ProductTable(props) {
-  const { products = [], onDelete} = props
+  const { products = [], onDelete } = props
   const rows = products.map((productInfo) => {
     return (
-      <ProductRow key={productInfo.id} product={productInfo} onDelete={onDelete}/>
+      <ProductRow
+        key={productInfo.id}
+        product={productInfo}
+        onDelete={onDelete}
+      />
     )
   })
   return (
