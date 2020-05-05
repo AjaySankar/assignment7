@@ -6,6 +6,7 @@ import ProductForm from "./ProductForm"
 import ProductRow from "./ProductRow"
 import ProductCounter from "./ProductCount"
 import ProductsClient from "./ProductClient"
+import TimedProgressBar from './TimedProgressBar'
 
 const getProductsQuery = gql`
   {
@@ -113,9 +114,11 @@ class ProductList extends Component {
                   position: "absolute",
                   top: 0,
                   right: 0,
+                  maxWidth: "1000px",
+                  maxHeight: "200px"
                 }}
                 onClose={this.deleteForever}
-                delay={3000}
+                delay={4000}
                 autohide
               >
                 <Toast.Header>
@@ -125,6 +128,10 @@ class ProductList extends Component {
                 </Toast.Header>
                 <Toast.Body>
                   <span> Deleted product !! </span>
+                  {shouldShowUndoToast &&
+                    <TimedProgressBar totalTime={4000} timerInterval={1000} variant="danger"/>
+                  }
+                  <br/>
                   <Button variant="warning" size="sm" onClick={this.undoDelete}>
                     UNDO
                   </Button>{" "}
