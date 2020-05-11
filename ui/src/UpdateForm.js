@@ -41,6 +41,7 @@ class UpdateForm extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSave = this.handleSave.bind(this)
     this.getProductInfo = this.getProductInfo.bind(this)
+    this.getProductCount = this.getProductCount.bind(this)
     const {
       match: {
         params: { id },
@@ -48,11 +49,29 @@ class UpdateForm extends Component {
     } = this.props
     this.state = {
       product: { ...RESET_VALUES, ...{}, ...{ id: parseInt(id, 10) } },
+      productCount: 0
     }
   }
 
   componentDidMount() {
     this.getProductInfo()
+    this.getProductCount()
+  }
+
+  getProductCount() {
+    ProductsClient.query({
+      query: gql`
+        {
+          getProductCount
+        }
+      `
+    })
+    .then(({ data = {} }) =>
+        this.setState({
+          productCount: data.getProductCount,
+        })
+      )
+    .catch((error) => window.console.log(error))
   }
 
   getProductInfo() {
@@ -122,7 +141,8 @@ class UpdateForm extends Component {
 
   render() {
     const {
-      product: { category, price, name, image },
+      product: { id, category, price, name, image },
+      productCount
     } = this.state
     return (
       <Form onSubmit={this.handleSave}>
@@ -185,6 +205,14 @@ class UpdateForm extends Component {
             >
               Reset Product
             </Button>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col}>
+            <Button href={`/edit/product/${id-1}`} disabled={id===1}>Prev</Button> 
+          </Form.Group>
+          <Form.Group as={Col}>
+            <Button href={`/edit/product/${id+1}`} disabled={id===productCount}>Next</Button> 
           </Form.Group>
         </Form.Row>
         <Form.Row>
